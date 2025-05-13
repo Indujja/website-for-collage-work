@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students All Activity Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container-fluid {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        h3 {
+            color: #007bff;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .dropdown-menu a:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <h3 class="text-center">
+                    Students All Activity Management System
+                </h3>
+                <div class="dropdown text-center mb-4">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">
+                        Select Role
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#" onclick="changeButtonText('Student')">Student</a>
+                        <a class="dropdown-item" href="#" onclick="changeButtonText('Staff')">Staff</a>
+                        <a class="dropdown-item" href="#" onclick="changeButtonText('Admin')">Admin</a>
+                    </div>
+                </div>
+                <form id="loginForm" role="form">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter your email" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Enter your password" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.min.js"></script>
+    <script>
+        let selectedRole = 'Student';
+
+        function changeButtonText(text) {
+            selectedRole = text;
+            document.getElementById('dropdownMenuButton').textContent = text;
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                role: selectedRole.toLowerCase()
+            };
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('role', data.role);
+                    
+                    // Redirect based on role
+                    switch(data.role) {
+                        case 'student':
+                            window.location.href = '/student.html';
+                            break;
+                        case 'staff':
+                            window.location.href = '/teacher.html';
+                            break;
+                        case 'admin':
+                            window.location.href = '/admin.html';
+                            break;
+                    }
+                } else {
+                    alert(data.error || 'Login failed');
+                }
+            } catch (error) {
+                alert('Login failed. Please try again.');
+            }
+        });
+
+        // Check if user is already logged in
+        window.addEventListener('load', () => {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role');
+            if (token && role) {
+                switch(role) {
+                    case 'student':
+                        window.location.href = '/student.html';
+                        break;
+                    case 'staff':
+                        window.location.href = '/teacher.html';
+                        break;
+                    case 'admin':
+                        window.location.href = '/admin.html';
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

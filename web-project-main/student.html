@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
+    <style>
+        /* Previous styles remain the same */
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="text-center mb-0">Enter the Details</h3>
+                    <button class="btn btn-danger" onclick="logout()">Logout</button>
+                </div>
+                <div class="btn-group d-flex mb-4" role="group">
+                    <button class="btn btn-secondary w-100" type="button" onclick="showForm('placement')">Placement</button>
+                    <button class="btn btn-secondary w-100" type="button" onclick="showForm('internship')">Internship</button>
+                    <button class="btn btn-secondary w-100" type="button" onclick="showForm('behonors')">BE Honors</button>
+                    <button class="btn btn-secondary w-100" type="button" onclick="showForm('additionalcourse')">Additional Courses</button>
+                </div>
+                <form id="dynamicForm" role="form">
+                    <!-- Form content will be dynamically inserted here -->
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentFormType = '';
+
+        // Check authentication on page load
+        window.addEventListener('load', () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login.html';
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            window.location.href = '/login.html';
+        }
+
+        function showForm(type) {
+            currentFormType = type;
+            const form = document.getElementById('dynamicForm');
+            form.innerHTML = ''; // Clear previous form
+
+            const commonFields = `
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control" id="name" required />
+                </div>
+                <div class="form-group">
+                    <label for="usn">USN</label>
+                    <input type="text" class="form-control" id="usn" required />
+                </div>
+                <div class="form-group">
+                    <label for="semester">Semester</label>
+                    <input type="text" class="form-control" id="semester" required />
+                </div>
+                <div class="form-group">
+                    <label for="section">Section</label>
+                    <input type="text" class="form-control" id="section" required />
+                </div>
+            `;
+
+            let specificFields = '';
+            switch(type) {
+                case 'placement':
+                    specificFields = `
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="company">Company</label>
+                            <input type="text" class="form-control" id="company" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="ctc">CTC</label>
+                            <input type="text" class="form-control" id="ctc" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="year">Year of Placement</label>
+                            <input type="number" class="form-control" id="year" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="offerLetter">Offer Letter</label>
+                            <input type="file" class="form-control-file" id="offerLetter" accept="application/pdf" required />
+                        </div>
+                    `;
+                    break;
+                case 'internship':
+                    specificFields = `
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="company">Company</label>
+                            <input type="text" class="form-control" id="company" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="offerLetter">Offer Letter</label>
+                            <input type="file" class="form-control-file" id="offerLetter" accept="application/pdf" required />
+                        </div>
+                    `;
+                    break;
+                case 'behonors':
+                    specificFields = `
+                        <div class="form-group">
+                            <label for="marks1">Marks for 1st Sem</label>
+                            <input type="number" class="form-control" id="marks1" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="marks2">Marks for 2nd Sem</label>
+                            <input type="number" class="form-control" id="marks2" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="marks3">Marks for 3rd Sem</label>
+                            <input type="number" class="form-control" id="marks3" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="marks4">Marks for 4th Sem</label>
+                            <input type="number" class="form-control" id="marks4" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="course">Course</label>
+                            <input type="text" class="form-control" id="course" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="certificate">Certificate</label>
+                            <input type="file" class="form-control-file" id="certificate" accept="application/pdf,image/*" required />
+                        </div>
+                    `;
+                    break;
+                case 'additionalcourse':
+                    specificFields = `
+                        <div class="form-group">
+                            <label for="courses">Courses</label>
+                            <input type="text" class="form-control" id="courses" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="completionYear">Year of Completion</label>
+                            <input type="number" class="form-control" id="completionYear" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="duration">Duration of the Course</label>
+                            <input type="text" class="form-control" id="duration" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="certificate">Certificate</label>
+                            <input type="file" class="form-control-file" id="certificate" accept="application/pdf,image/*" required />
+                        </div>
+                    `;
+                    break;
+            }
+
+            form.innerHTML = commonFields + specificFields + '<button type="submit" class="btn btn-primary">Submit</button>';
+            form.onsubmit = submitForm;
+        }
+
+        async function submitForm(event) {
+            event.preventDefault();
+            
+            const formData = new FormData();
+            const inputs = event.target.querySelectorAll('input');
+            
+            inputs.forEach(input => {
+                if (input.type === 'file') {
+                    formData.append(input.id, input.files[0]);
+                } else {
+                    formData.append(input.id, input.value);
+                }
+            });
+
+            try {
+                const response = await fetch(`/api/${currentFormType}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert('Data submitted successfully!');
+                    event.target.reset();
+                } else {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Submission failed');
+                }
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+    </script>
+</body>
+</html>

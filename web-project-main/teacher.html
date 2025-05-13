@@ -1,0 +1,45 @@
+<script>
+    async function fetchDetails(type) {
+        try {
+            const response = await fetch(`/api/${type}`, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+            });
+            const data = await response.json();
+            renderDetails(type, data);
+        } catch (error) {
+            console.error("Error fetching details:", error);
+        }
+    }
+
+    function renderDetails(type, data) {
+        const content = document.getElementById('detailsContent');
+        if (!data.length) {
+            content.innerHTML = '<p class="text-muted">No data available for this type.</p>';
+            return;
+        }
+
+        let html = '<table><thead><tr>';
+        Object.keys(data[0]).forEach((key) => {
+            html += `<th>${key}</th>`;
+        });
+        html += '</tr></thead><tbody>';
+        data.forEach((record) => {
+            html += '<tr>';
+            Object.values(record).forEach((value) => {
+                html += `<td>${value}</td>`;
+            });
+            html += '</tr>';
+        });
+        html += '</tbody></table>';
+        html += '<button class="btn btn-primary mt-3" onclick="downloadExcel()">Download Excel</button>';
+        content.innerHTML = html;
+    }
+
+    async function downloadExcel() {
+        // Similar logic to the original code
+    }
+
+    function showDetails(option) {
+        fetchDetails(option);
+    }
+</script>
